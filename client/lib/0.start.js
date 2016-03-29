@@ -1,0 +1,1 @@
+LIMSSchema = GraphQL.createLokkaClient('LIMS');

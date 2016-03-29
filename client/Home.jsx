@@ -1,6 +1,6 @@
 Home = React.createClass({
 
-    //Diese Componente ist die erste Seite, die der User zu gesicht bekommt.
+    //Diese Komponente ist die erste Seite, die der User zu gesicht bekommt.
 
     mixins: [ReactMeteorData],
 

@@ -2,7 +2,7 @@ const {browserHistory} = ReactRouter;
 
 AuthApp = React.createClass({
 
-    // Diese Componente wird dann angezeigt wenn der User auf /app springt. Er muss eingelogt sein sonst wird er auf /login weitergeleitet.
+    // Diese Komponente wird dann angezeigt wenn der User auf /app springt. Er muss eingelogt sein sonst wird er auf /login weitergeleitet.
 
     mixins: [ReactMeteorData],
 
@@ -33,7 +33,13 @@ AuthApp = React.createClass({
     render() {
 
         if (!this.data.currentUserId)
-            return null;
+            return (
+                <div className="container">
+                    <div className="progress">
+                        <div className="indeterminate"></div>
+                    </div>
+                </div>
+            )
         return (
             <div>
                 <SideNav history={this.props.history}/>
