@@ -79,7 +79,7 @@ UserLoginForm = React.createClass({
                     </div>
                     <form onSubmit={this.onSubmit}>
                         <div className="card-content">
-                            {/* Wenn eine Fehler aus dem Callback der loginWithPassword Funktion kommt, wird sie mit dieser Componente dargestellt */}
+                            {/* Wenn eine Fehler aus dem Callback der loginWithPassword Funktion kommt, wird sie mit dieser Komponente dargestellt */}
                             <AuthErrors errors={this.state.errors} />
                             <div className="row">
                                 <div className="input-field col s6">

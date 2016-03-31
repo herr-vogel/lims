@@ -27,7 +27,24 @@ Customer = new GraphQLObjectType({
                 var myPromise = new Promise(function (resolve) {
                     var fetchedPersons = People.find({customer_id: aCustomer._id}).fetch();
                     if (fetchedPersons === undefined || fetchedPersons.length == 0) {
-                        resolve([People.findOne({_id: "0"})]);
+                        resolve([{
+                            _id: "0",
+                            salutation: "",
+                            firstName: "",
+                            lastName: "",
+                            role: "",
+                            fax: "",
+                            phone: "",
+                            mobile: "",
+                            email: "",
+                            customer_id: "",
+                            privateAddress: {
+                                "street": "",
+                                "city": "",
+                                "zip": "",
+                                "country": ""
+                            }
+                        }]);
                     }
                     else {
                         resolve(fetchedPersons);
@@ -64,7 +81,26 @@ Person = new GraphQLObjectType({
                 var myPromise = new Promise(function (resolve) {
                     var fetchedCustomer = Customers.findOne({_id: aPerson.customer_id});
                     if (fetchedCustomer === undefined || fetchedCustomer.length == 0) {
-                        resolve([Customers.findOne({_id: "0"})]);
+                        resolve({
+                            _id: "0",
+                            name: "",
+                            department: "",
+                            website: "",
+                            phone: "",
+                            fax: "",
+                            invoiceAddress: {
+                                "street": "",
+                                "city": "",
+                                "zip": "",
+                                "country": ""
+                            },
+                            shippingAddress: {
+                                "street": "",
+                                "city": "",
+                                "zip": "",
+                                "country": ""
+                            }
+                        });
                     }
                     else {
                         resolve(fetchedCustomer);

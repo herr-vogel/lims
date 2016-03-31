@@ -20,7 +20,12 @@ Routes = React.createClass({
                 <Route path="/app" component={AuthApp}>
                     <IndexRoute component={Home} />
                     <Route path="/customer" component={Customer}>
-                        <Route path="company" component={CompanyList} />
+                        <Route path="company" component={Company}>
+                            <IndexRoute component={CompanyList} />
+                            <Route path="add" component={CompanyAdd} />
+                            <Route path=":customerId" component={CompanyDetail} />
+                            <Route path=":customerId/edit" component={CompanyEdit} />
+                        </Route>
                     </Route>
                 </Route>
                 <Route path="*" component={App}>

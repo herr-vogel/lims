@@ -44,19 +44,116 @@ const query = new GraphQLObjectType({
 
                 return Promise.resolve(Customers.find({}, {limit: args.limit}).fetch());
             }
-        }
+        },
+        customer: {
+            type: Customer,
+            args: {
+                id: {type: GraphQLString}
+            },
+            resolve (rootValue, args, info) {
+                if (!canExecute(rootValue, args, info))
+                    return Promise.reject(
+                        new Meteor.Error((Meteor.users.findOne({_id: rootValue.userId})).profile.name + ' cannot execute '
+                            + info.operation.operation + ': ' + info.fieldName)
+                    );
+                return Promise.resolve(Customers.findOne({"_id": args.id}));
+            }
+        },
     })
 })
 
 const mutation = new GraphQLObjectType({
     name: 'LIMSMutations',
     fields: () => ({
+        insertCustomer: {
+            type: Customer,
+            args: {
+                name: {type: GraphQLString},
+                department: {type: GraphQLString},
+                website: {type: GraphQLString},
+                phone: {type: GraphQLString},
+                fax: {type: GraphQLString},
+                invoiceStreet: {type: GraphQLString},
+                invoiceCity: {type: GraphQLString},
+                invoiceZip: {type: GraphQLString},
+                invoiceCountry: {type: GraphQLString},
+                shippingStreet: {type: GraphQLString},
+                shippingCity: {type: GraphQLString},
+                shippingZip: {type: GraphQLString},
+                shippingCountry: {type: GraphQLString}
+            },
+            resolve: (rootValue, args, info) => {
+                if (!canExecute(rootValue, args, info))
+                    return Promise.reject(
+                        new Meteor.Error((Meteor.users.findOne({_id: rootValue.userId})).profile.name + ' cannot execute '
+                            + info.operation.operation + ': ' + info.fieldName)
+                    );
+
+                var myPromise = new Promise(function (resolve) {
+                    var insertedCustomer = Customers.insert({
+                        "name": args.name,
+                        "customer_code": args.customerCode,
+                        "department": args.department,
+                        "website": args.website,
+                        "phone": args.phone,
+                        "fax": args.fax,
+                        "invoiceAddress": {
+                            "street": args.invoiceStreet,
+                            "city": args.invoiceCity,
+                            "zip": args.invoiceZip,
+                            "country": args.invoiceCountry
+                        },
+                        "shippingAddress": {
+                            "street": args.shippingStreet,
+                            "city": args.shippingCity,
+                            "zip": args.shippingZip,
+                            "country": args.shippingCountry
+                        }
+                    }, function (err, docsInserted) {
+
+                        if (err) {
+                            resolve(err)
+                        }
+                        else {
+                            resolve(Customers.findOne({"_id": docsInserted}));
+                        }
+
+
+                    })
+                })
+                return myPromise
+
+            }
+        },
+        deleteCustomer: {
+            type: Customer,
+            args: {
+                id: {type: GraphQLString}
+            },
+            resolve: (rootValue, args, info) => {
+                if (!canExecute(rootValue, args, info))
+                    return Promise.reject(
+                        new Meteor.Error((Meteor.users.findOne({_id: rootValue.userId})).profile.name + ' cannot execute '
+                            + info.operation.operation + ': ' + info.fieldName)
+                    );
+                var myPromise = new Promise(function (resolve) {
+                    var deletetdCustomer = Customers.remove({"_id": args.id}, function (err, result) {
+                        if (err) {
+                            resolve(err);
+                        }
+                        else {
+                            resolve(result);
+                        }
+                    })
+                });
+                return myPromise;
+            }
+        },
         updateCustomer: {
             type: Customer,
             args: {
                 id: {type: GraphQLString},
                 name: {type: GraphQLString},
-                customerCode: {type: GraphQLString},
                 department: {type: GraphQLString},
                 website: {type: GraphQLString},
                 phone: {type: GraphQLString},
@@ -82,7 +179,6 @@ const mutation = new GraphQLObjectType({
                     {
                         $set: {
                             "name": args.name,
-                            "customer_code": args.customerCode,
                             "department": args.department,
                             "website": args.website,
                             "phone": args.phone,
@@ -96,8 +192,7 @@ const mutation = new GraphQLObjectType({
                             "shippingAddress.zip": args.shippingZip,
                             "shippingAddress.country": args.shippingCountry
                         }
-                    })).then(function () {
-                });
+                    }))
                 return Promise.resolve(Customers.findOne({"_id": id}));
             }
         }

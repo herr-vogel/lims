@@ -33,13 +33,16 @@ Meteor.startup(function() {
     //Erstellen der Permissions Collection, wo die Componenten und allowed Querries für die dazugehörigen Rollen gespeichert sind
 
     if(Permissions.find({}).count() === 0) {
-        console.log("test")
         Permissions.insert({
             role: 'user',
             components: [
                 {name: 'Customer'}],
             allowed: [
-                {name: 'customers'}
+                {name: 'customers'},
+                {name: 'insertCustomer'},
+                {name: 'customer'},
+                {name: 'deleteCustomer'},
+                {name: 'updateCustomer'}
             ]
         });
 
