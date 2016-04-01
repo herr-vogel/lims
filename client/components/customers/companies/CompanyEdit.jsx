@@ -128,6 +128,7 @@ CompanyEdit = React.createClass({
                                 <input type="text" id="name" valueLink={this.linkState('inputName')} className="validate" />
                             </div>
                             <div className="input-field">
+                                <i className="material-icons prefix">phone</i>
                                 <input type="text" id="phone" valueLink={this.linkState('inputPhone')} />
                                 <label className="active" htmlFor="phone">Phone</label>
                             </div>
@@ -192,7 +193,7 @@ CompanyEdit = React.createClass({
                             <i className="large mdi-navigation-menu"></i>
                         </a>
                         <ul>
-                            <li><Link to={`/customer/company/${this.props.params.customerId}`} className="btn-floating red"><i className="material-icons">cancel</i></Link></li>
+                            <li><Link to={`/customers/company/${this.props.params.customerId}`} className="btn-floating red"><i className="material-icons">cancel</i></Link></li>
                             <li><button type="submit" className="btn-floating green"><i className="material-icons">save</i></button></li>
                         </ul>
                     </div>

@@ -25,3 +25,5 @@ materialize:materialize
 accounts-password
 alanning:roles
 kadira:graphql
+victoransel:react-linkedstate-mixin
+praneybehl:react-select

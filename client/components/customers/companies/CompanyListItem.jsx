@@ -7,10 +7,13 @@ CompanyListItem = React.createClass({
     },
     
     render() {
+        if (this.props.company._id === "0"){
+            return<tr></tr>
+        }
         return(
             <tr>
                 <td>
-                    <Link to={`/customer/company/${this.props.company._id}`}> {this.props.company.name} </Link>
+                    <Link to={`/customers/company/${this.props.company._id}`}> {this.props.company.name} </Link>
                 </td>
                 <td>
                     {this.props.company.invoiceAddress.street}

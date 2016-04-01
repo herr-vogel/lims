@@ -1,11 +1,11 @@
-Company = React.createClass({
+Person = React.createClass({
 
     componentWillMount () {
-        document.title = "LIMS Companies"
+        document.title = "LIMS People"
     },
 
     render() {
-        return(
+        return (
             <div>
                 {this.props.children}
             </div>

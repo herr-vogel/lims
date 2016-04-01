@@ -58,6 +58,7 @@ npm-bcrypt@0.7.8_2
 npm-mongo@1.4.39_1
 observe-sequence@1.0.7
 ordered-dict@1.0.4
+praneybehl:react-select@0.6.11_1
 promise@0.5.1
 random@1.0.5
 rate-limit@1.0.0
@@ -85,5 +86,6 @@ tracker@1.0.9
 ui@1.0.8
 underscore@1.0.4
 url@1.0.5
+victoransel:react-linkedstate-mixin@0.13.2
 webapp@1.2.3
 webapp-hashing@1.0.5

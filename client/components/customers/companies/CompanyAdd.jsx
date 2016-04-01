@@ -51,7 +51,7 @@ CompanyAdd = React.createClass({
             console.log(result.insertCustomer);
 
             if(result.insertCustomer._id !== undefined || result.insertCustomer._id > 0) {
-                browserHistory.push(`/customer/company/${result.insertCustomer._id}`);
+                browserHistory.push(`/customers/company/${result.insertCustomer._id}`);
             }
             else {
                 this.setState({
@@ -76,13 +76,14 @@ CompanyAdd = React.createClass({
                 <form onSubmit={this.onSubmit}>
                     <AuthErrors errors={this.state.errors} />
                     <div className="row">
-                        <div className="col s6">
+                        <div className="col l6">
                             <h5>Add Company</h5>
                             <div className="input-field">
                                 <label htmlFor="name">Name</label>
                                 <input type="text" id="name" valueLink={this.linkState('inputName')} className="validate" />
                             </div>
                             <div className="input-field">
+                                <i className="material-icons prefix">phone</i>
                                 <input type="text" id="phone" valueLink={this.linkState('inputPhone')} />
                                 <label htmlFor="phone">Phone</label>
                             </div>
@@ -100,7 +101,7 @@ CompanyAdd = React.createClass({
                             </div>
 
                         </div>
-                        <div className="col s3">
+                        <div className="col l3">
                             <h5>Invoice</h5>
                             <div className="input-field">
                                 <label htmlFor="invoiceStreet">Street</label>
@@ -120,7 +121,7 @@ CompanyAdd = React.createClass({
                             </div>
 
                         </div>
-                        <div className="col s3">
+                        <div className="col l3">
                             <h5>Shipping</h5>
                             <div className="input-field">
                                 <label htmlFor="invoiceStreet">Street</label>
@@ -147,7 +148,7 @@ CompanyAdd = React.createClass({
                             <i className="large mdi-navigation-menu"></i>
                         </a>
                         <ul>
-                            <li><Link to={"/customer/company"} className="btn-floating red"><i className="material-icons">cancel</i></Link></li>
+                            <li><Link to={"/customers/company"} className="btn-floating red"><i className="material-icons">cancel</i></Link></li>
                             <li><button type="submit" className="btn-floating green"><i className="material-icons">save</i></button></li>
                         </ul>
                     </div>

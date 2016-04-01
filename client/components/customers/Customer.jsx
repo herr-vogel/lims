@@ -14,7 +14,7 @@ Customer = React.createClass({
     },
 
     componentWillMount() {
-        Meteor.call('canShow', 'Customer', function(error, result) {
+        Meteor.call('canShow', 'Customers', function(error, result) {
             if(result !== undefined) {
                 this.setState({
                     loadingCallback: false,
@@ -58,8 +58,8 @@ Customer = React.createClass({
                         <nav className="light-blue">
                             <div className="nav-wrapper">
                                 <ul>
-                                    <li><Link to={'/customer/company'} activeClassName="active">Companies</Link></li>
-                                    <li><Link to={'/customer/people'} activeClassName="active">People</Link></li>
+                                    <li><Link to={'/customers/company'} activeClassName="active">Companies</Link></li>
+                                    <li><Link to={'/customers/person'} activeClassName="active">People</Link></li>
                                 </ul>
                             </div>
                         </nav>

@@ -1,7 +1,8 @@
 Meteor.startup(function() {
 
     Permissions.remove({})
-    //People.remove({});
+    People.remove({});
+    Customers.remove({});
 
     if (Meteor.users.find().count() === 0) {
 
@@ -36,13 +37,19 @@ Meteor.startup(function() {
         Permissions.insert({
             role: 'user',
             components: [
-                {name: 'Customer'}],
+                {name: 'Customers'}],
             allowed: [
                 {name: 'customers'},
                 {name: 'insertCustomer'},
                 {name: 'customer'},
                 {name: 'deleteCustomer'},
-                {name: 'updateCustomer'}
+                {name: 'updateCustomer'},
+                {name: 'people'},
+                {name: 'person'},
+                {name: 'deletePerson'},
+                {name: 'insertPerson'},
+                {name: "removeCustomerIdInPerson"},
+                {name: 'updatePerson'}
             ]
         });
 
@@ -56,6 +63,7 @@ Meteor.startup(function() {
 
     if(Customers.find({}).count() === 0) {
         Customers.insert({
+            _id: "2x6EMcMLPtE6nojDt",
             name: "Test",
             department: "Departement",
             website: "test.com",
@@ -74,47 +82,9 @@ Meteor.startup(function() {
                 "country": "Test Land S"
             }
         });
-        Customers.insert({
-            _id: "0",
-            name: "",
-            department: "",
-            website: "",
-            phone: "",
-            fax: "",
-            invoiceAddress: {
-                "street": "",
-                "city": "",
-                "zip": "",
-                "country": ""
-            },
-            shippingAddress: {
-                "street": "",
-                "city": "",
-                "zip": "",
-                "country": ""
-            }
-        })
     }
 
     if(People.find({}).count() === 0) {
-        People.insert({
-            _id: "0",
-            salutation: "",
-            firstName: "",
-            lastName: "",
-            role: "",
-            fax: "",
-            phone: "",
-            mobile: "",
-            email: "",
-            customer_id: "",
-            privateAddress: {
-                "street": "",
-                "city": "",
-                "zip": "",
-                "country": ""
-            }
-        });
         People.insert({
             salutation: "Herr",
             firstName: "Daniel",
@@ -125,6 +95,22 @@ Meteor.startup(function() {
             mobile: "Mobile",
             email: "daniel.vogel@m.com",
             customer_id: "2x6EMcMLPtE6nojDt",
+            privateAddress: {
+                "street": "Buchen",
+                "city": "Basel",
+                "zip": "4000",
+                "country": "Schweiz"
+            }
+        })
+        People.insert({
+            salutation: "Herr S",
+            firstName: "Daniel S",
+            lastName: "Vogel S",
+            role: "Intern",
+            fax: "Fax",
+            phone: "Phone",
+            mobile: "Mobile",
+            email: "daniel.vogel@m.com",
             privateAddress: {
                 "street": "Buchen",
                 "city": "Basel",

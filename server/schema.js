@@ -59,12 +59,64 @@ const query = new GraphQLObjectType({
                 return Promise.resolve(Customers.findOne({"_id": args.id}));
             }
         },
+        people: {
+            type: new GraphQLList(Person),
+            args: {
+                limit: {type: GraphQLInt}
+            },
+            resolve(rootValue, args, info) {
+                if (!canExecute(rootValue, args, info))
+                    return Promise.reject(
+                        new Meteor.Error((Meteor.users.findOne({_id: rootValue.userId})).profile.name + ' cannot execute '
+                            + info.operation.operation + ': ' + info.fieldName)
+                    );
+
+                let fields = {};
+                let fieldASTs = info.fieldASTs;
+                fieldASTs[0].selectionSet.selections.map(function (selection) {
+                    fields[selection.name.value] = 1;
+                });
+
+                return Promise.resolve(Meteor.wrapAsync(People.rawCollection().aggregate.bind(People.rawCollection()))([
+                    {
+                        $lookup:
+                        {
+                            from: "customers",
+                            localField: "customer_id",
+                            foreignField: "_id",
+                            as: "customer"
+                        }
+                    },
+                    {
+                        $unwind: {
+                            path: "$customer",
+                            preserveNullAndEmptyArrays: true
+                        }
+                    }
+                ]));
+            }
+        },
+        person: {
+            type: Person,
+            args: {
+                id: {type: GraphQLString}
+            },
+            resolve (rootValue, args, info) {
+                if (!canExecute(rootValue, args, info))
+                    return Promise.reject(
+                        new Meteor.Error((Meteor.users.findOne({_id: rootValue.userId})).profile.name + ' cannot execute '
+                            + info.operation.operation + ': ' + info.fieldName)
+                    );
+                return Promise.resolve(People.findOne({"_id": args.id}));
+            }
+        }
     })
-})
+});
 
 const mutation = new GraphQLObjectType({
     name: 'LIMSMutations',
     fields: () => ({
+        //customer mutations
         insertCustomer: {
             type: Customer,
             args: {
@@ -194,6 +246,156 @@ const mutation = new GraphQLObjectType({
                         }
                     }))
                 return Promise.resolve(Customers.findOne({"_id": id}));
+            }
+        },
+        //person mutations
+        deletePerson: {
+            type: Customer,
+            args: {
+                id: {type: GraphQLString}
+            },
+            resolve: (rootValue, args, info) => {
+                if (!canExecute(rootValue, args, info))
+                    return Promise.reject(
+                        new Meteor.Error((Meteor.users.findOne({_id: rootValue.userId})).profile.name + ' cannot execute '
+                            + info.operation.operation + ': ' + info.fieldName)
+                    );
+                var myPromise = new Promise(function (resolve) {
+                    var deletetdPerson = People.remove({"_id": args.id}, function (err, result) {
+                        if (err) {
+                            resolve(err);
+                        }
+                        else {
+                            resolve(result);
+                        }
+                    })
+                });
+                return myPromise;
+            }
+        },
+        insertPerson: {
+            type: Person,
+            args: {
+                salutation: {type: GraphQLString},
+                firstName: {type: GraphQLString},
+                lastName: {type: GraphQLString},
+                role: {type: GraphQLString},
+                fax: {type: GraphQLString},
+                phone: {type: GraphQLString},
+                mobile: {type: GraphQLString},
+                email: {type: GraphQLString},
+                privateStreet: {type: GraphQLString},
+                privateZip: {type: GraphQLString},
+                privateCity: {type: GraphQLString},
+                privateCountry: {type: GraphQLString},
+                customerId: {type: GraphQLString}
+
+            },
+            resolve: (rootValue, args, info) => {
+                if (!canExecute(rootValue, args, info))
+                    return Promise.reject(
+                        new Meteor.Error((Meteor.users.findOne({_id: rootValue.userId})).profile.name + ' cannot execute '
+                            + info.operation.operation + ': ' + info.fieldName)
+                    );
+                var myPromise = new Promise(function (resolve) {
+                    var insertedPerson = People.insert({
+                        "salutation": args.salutation,
+                        "firstName": args.firstName,
+                        "lastName": args.lastName,
+                        "role": args.role,
+                        "phone": args.phone,
+                        "mobile": args.mobile,
+                        "fax": args.fax,
+                        "email": args.email,
+                        "customer_id": args.customerId,
+                        "privateAddress": {
+                            "street": args.privateStreet,
+                            "city": args.privateCity,
+                            "zip": args.privateZip,
+                            "country": args.privateCountry
+                        }
+
+                    }, function (err, docsInserted) {
+                        if (err) {
+                            resolve(err)
+                        }
+                        else {
+                            resolve(People.findOne({"_id": docsInserted}));
+                        }
+                    })
+                })
+                return myPromise;
+
+
+            }
+        },
+        updatePerson: {
+            type: Person,
+            args: {
+                id: {type: GraphQLString},
+                salutation: {type: GraphQLString},
+                firstName: {type: GraphQLString},
+                lastName: {type: GraphQLString},
+                role: {type: GraphQLString},
+                fax: {type: GraphQLString},
+                phone: {type: GraphQLString},
+                mobile: {type: GraphQLString},
+                email: {type: GraphQLString},
+                privateStreet: {type: GraphQLString},
+                privateZip: {type: GraphQLString},
+                privateCity: {type: GraphQLString},
+                privateCountry: {type: GraphQLString},
+                customerId: {type: GraphQLString}
+
+            },
+            resolve: (rootValue, args, info) => {
+                if (!canExecute(rootValue, args, info))
+                    return Promise.reject(
+                        new Meteor.Error((Meteor.users.findOne({_id: rootValue.userId})).profile.name + ' cannot execute '
+                            + info.operation.operation + ': ' + info.fieldName)
+                    );
+                let id = args.id;
+                Promise.resolve(People.update({"_id": args.id},
+                    {
+                        $set: {
+                            "salutation": args.salutation,
+                            "firstName": args.firstName,
+                            "lastName": args.lastName,
+                            "role": args.role,
+                            "phone": args.phone,
+                            "mobile": args.mobile,
+                            "fax": args.fax,
+                            "email": args.email,
+                            "customer_id": args.customerId,
+                            "privateAddress.street": args.privateStreet,
+                            "privateAddress.city": args.privateCity,
+                            "privateAddress.zip": args.privateZip,
+                            "privateAddress.country": args.privateCountry
+
+                        }
+                    })).then(function () {
+                    //console.log("Mutation Done");
+                });
+                return Promise.resolve(People.findOne({"_id": id}));
+            }
+        },
+        removeCustomerIdInPerson: {
+            type: Person,
+            args: {
+                personId: {type: GraphQLString}
+            },
+            resolve: (rootValue, args, info) => {
+                if (!canExecute(rootValue, args, info))
+                    return Promise.reject(
+                        new Meteor.Error((Meteor.users.findOne({_id: rootValue.userId})).profile.name + ' cannot execute '
+                            + info.operation.operation + ': ' + info.fieldName)
+                    );
+                var personId = args.personId;
+                Promise.resolve(People.update({"_id": args.personId}, {$set: {"customer_id": ""}})).then(function () {
+                    //console.log("Mutation Done");
+                });
+
+                return Promise.resolve(People.findOne({"_id": personId}));
             }
         }
     })

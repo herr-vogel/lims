@@ -1,42 +1,46 @@
 const {Link} = ReactRouter;
 
-//Diese Komponente zeigt eine Tabelle mit allen Firmen.
-
-CompanyList = React.createClass({
+PersonList = React.createClass({
 
     getInitialState() {
         return {
             searchString: '',
-            customers: [],
+            people: [],
             loading: true,
             message: "loading..."
         }
     },
 
     componentDidMount() {
-
         LIMSSchema.query(`
         {
-            customers {
+            people {
                 _id,
-                name,
-                website,
-                invoiceAddress {
+                email,
+                salutation,
+                firstName,
+                lastName,
+                role
+                customer {
+                    _id,
+                    name
+                }
+                privateAddress {
                     street,
-                    city,
                     zip,
+                    city,
                     country
                 }
             }
         }
       `).then(result => {
-
+            console.log(result.people)
             this.setState({
-                customers: result.customers,
+                people: result.people,
                 loading: false
-            })
+            });
         }, error => {
-            console.log('CompanyList error:', error);
+            console.log('PersonList error:', error);
 
             this.setState({
                 message: error.reason
@@ -44,22 +48,22 @@ CompanyList = React.createClass({
         });
     },
 
-    removeCustomer: function (customerId) {
+    removePerson: function (personId) {
 
         LIMSSchema.mutate(`{
-            deleteCustomer (
-                id: "${customerId}"
+            deletePerson (
+                id: "${personId}"
             )
             {
                 name
             }
         }`).then(result => {
 
-            var updateCustomers = this.state.customers;
+            var updatePersons = this.state.people;
 
             this.setState({
-                customers: updateCustomers.filter(function (el) {
-                    return el._id != customerId
+                people: updatePersons.filter(function (el) {
+                    return el._id != personId
                 })
             })
 
@@ -74,19 +78,21 @@ CompanyList = React.createClass({
         this.setState({searchString: e.target.value});
     },
 
-    renderCompanies() {
-        var filteredCompanies = this.state.customers,
+    renderPeople() {
+        var filteredPeople = this.state.people,
             searchString = this.state.searchString.trim().toLowerCase();
 
         if (searchString.length > 0) {
-            filteredCompanies = filteredCompanies.filter(function (l) {
+            filteredPeople = filteredPeople.filter(function (l) {
                 return JSON.stringify(l).toLowerCase().match(searchString);
             })
+
         }
 
-        return filteredCompanies.map(function(company) {
-            return <CompanyListItem key={company._id} company={company} removeFunc={this.removeCustomer.bind(null, company._id)} />;
-        }.bind(this))
+
+        return filteredPeople.map(function (person) {
+            return <PersonListItem key={person._id} person={person} removeFunc={this.removePerson.bind(null, person._id)} />;
+        }.bind(this));
     },
 
     render() {
@@ -107,24 +113,30 @@ CompanyList = React.createClass({
                 </div>
                 <table className="bordered highlight responsive-table">
                     <thead>
-                        <tr>
-                            <th data-field="name">Name</th>
-                            <th data-field="street">Street</th>
-                            <th data-field="city">City</th>
-                            <th data-field="country">Country</th>
-                            <th></th>
-                        </tr>
+                    <tr>
+                        <th data-field="name">Name</th>
+                        <th data-field="company">Company</th>
+                        <th data-field="role">Role</th>
+                        <th data-field="email">Email</th>
+                        <th data-field="street">Street</th>
+                        <th data-field="zip">Zip</th>
+                        <th data-field="city">City</th>
+                        <th data-field="country">Country</th>
+                        <th></th>
+                    </tr>
                     </thead>
 
                     <tbody>
-                    {this.renderCompanies()}
+                    {this.renderPeople()}
                     </tbody>
                 </table>
 
                 <div className="fixed-action-btn" style={{bottom: 45, right: 24}}>
-                    <Link className="btn-floating btn-large waves-effect waves-light red" to={"/customers/company/add"}><i className="material-icons">add</i></Link>
+                    <Link className="btn-floating btn-large waves-effect waves-light red" to={"/customers/person/add"}><i className="material-icons">add</i></Link>
                 </div>
             </div>
         )
     }
+
+
 })

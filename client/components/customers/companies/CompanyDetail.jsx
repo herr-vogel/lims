@@ -85,7 +85,7 @@ CompanyDetail = React.createClass({
             }
         }`).then(result => {
 
-            browserHistory.push("/customer/company");
+            browserHistory.push("/customers/company");
 
         }, error => {
             this.setState({
@@ -94,9 +94,37 @@ CompanyDetail = React.createClass({
         });
     },
 
+    removeCustomerIdInPerson: function (personId) {
+
+        LIMSSchema.mutate(`
+            {
+                removeCustomerIdInPerson (
+                    personId: "${personId}"
+                )
+                {
+                    _id
+                }
+            }
+        `).then(result => {
+
+            var updatedPersons = this.state.people;
+
+            this.setState({
+                people: updatedPersons.filter(function (el) {
+                    return el._id != personId
+                })
+            })
+        }, error => {
+            this.setState({
+                updateError: error.reason
+            })
+        });
+
+    },
+
     renderPersons() {
         return this.state.people.map(function (person) {
-            return <CompanyDetailPersonItem key={person._id} person={person} />
+            return <CompanyDetailPersonItem key={person._id} person={person} removeFunc={this.removeCustomerIdInPerson.bind(null, person._id)} />
         }.bind(this));
     },
 
@@ -148,7 +176,14 @@ CompanyDetail = React.createClass({
                 <div className="row">
                     <div className="col l12">
                         <h5>People</h5>
-                        <table className="bordered highlight">
+                        <table className="bordered highlight responsive-table">
+                            <thead>
+                                <th data-field="name">Name</th>
+                                <th data-field="role">Role</th>
+                                <th data-field="email">Email</th>
+                                <th data-field="country">Country</th>
+                                <th></th>
+                            </thead>
                             <tbody>
                             {this.renderPersons()}
                             </tbody>
@@ -156,11 +191,12 @@ CompanyDetail = React.createClass({
                     </div>
                 </div>
                 <div className="fixed-action-btn horizontal" style={{bottom: 45, right: 24}}>
-                    <Link to={`/customer/company/${this.props.params.customerId}/edit`} className="btn-floating btn-large red">
+                    <Link to={`/customers/company/${this.props.params.customerId}/edit`} className="btn-floating btn-large red">
                         <i className="large material-icons">mode_edit</i>
                     </Link>
                     <ul>
-                        <li><bnutton onClick={this.removeCustomer} className="btn-floating red"><i className="material-icons">delete</i></bnutton></li>
+                        <li><button onClick={this.removeCustomer} className="btn-floating red"><i className="material-icons">delete</i></button></li>
+                        <li><Link className="btn-floating" to={"/customers/person/add"}><i className="material-icons">add</i></Link></li>
                     </ul>
                 </div>
 
