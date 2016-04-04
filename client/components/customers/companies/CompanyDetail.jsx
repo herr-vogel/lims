@@ -196,7 +196,6 @@ CompanyDetail = React.createClass({
                     </Link>
                     <ul>
                         <li><button onClick={this.removeCustomer} className="btn-floating red"><i className="material-icons">delete</i></button></li>
-                        <li><Link className="btn-floating" to={"/customers/person/add"}><i className="material-icons">add</i></Link></li>
                     </ul>
                 </div>
 

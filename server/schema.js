@@ -109,7 +109,51 @@ const query = new GraphQLObjectType({
                     );
                 return Promise.resolve(People.findOne({"_id": args.id}));
             }
+        },
+        users: {
+            type: new GraphQLList(User),
+            args: {
+                limit: {type: GraphQLInt}
+            },
+            resolve(rootValue, args, info) {
+                if (!canExecute(rootValue, args, info))
+                    return Promise.reject(
+                        new Meteor.Error((Meteor.users.findOne({_id: rootValue.userId})).profile.name + ' cannot execute '
+                            + info.operation.operation + ': ' + info.fieldName)
+                    );
+                return Promise.resolve(Meteor.users.find({}, {limit: args.limit}).fetch());
+            }
+        },
+        user: {
+            type: User,
+            args: {
+                id: {type: GraphQLString}
+            },
+            resolve(rootValue, args, info) {
+                if (!canExecute(rootValue, args, info))
+                    return Promise.reject(
+                        new Meteor.Error((Meteor.users.findOne({_id: rootValue.userId})).profile.name + ' cannot execute '
+                            + info.operation.operation + ': ' + info.fieldName)
+                    );
+                return Promise.resolve(Meteor.users.findOne({"_id": args.id}))
+            }
+        },
+        permissions: {
+            type: new GraphQLList(Permission),
+            args: {
+                role: {type: GraphQLString}
+            },
+            resolve (rootValue, args, info) {
+                if (!canExecute(rootValue, args, info))
+                    return Promise.reject(
+                        new Meteor.Error((Meteor.users.findOne({_id: rootValue.userId})).profile.name + ' cannot execute '
+                            + info.operation.operation + ': ' + info.fieldName)
+                    );
+                return Promise.resolve(Permissions.find({}).fetch());
+            }
         }
+
+
     })
 });
 
@@ -323,7 +367,7 @@ const mutation = new GraphQLObjectType({
                             resolve(People.findOne({"_id": docsInserted}));
                         }
                     })
-                })
+                });
                 return myPromise;
 
 
@@ -374,7 +418,7 @@ const mutation = new GraphQLObjectType({
 
                         }
                     })).then(function () {
-                    //console.log("Mutation Done");
+
                 });
                 return Promise.resolve(People.findOne({"_id": id}));
             }
@@ -392,10 +436,133 @@ const mutation = new GraphQLObjectType({
                     );
                 var personId = args.personId;
                 Promise.resolve(People.update({"_id": args.personId}, {$set: {"customer_id": ""}})).then(function () {
-                    //console.log("Mutation Done");
+
                 });
 
                 return Promise.resolve(People.findOne({"_id": personId}));
+            }
+        },
+        deleteUser: {
+            type: User,
+            args: {
+                id: {type: GraphQLString}
+            },
+            resolve: (rootValue, args, info) => {
+                if (!canExecute(rootValue, args, info))
+                    return Promise.reject(
+                        new Meteor.Error((Meteor.users.findOne({_id: rootValue.userId})).profile.name + ' cannot execute '
+                            + info.operation.operation + ': ' + info.fieldName)
+                    );
+                var roles = Roles.getRolesForUser(args.id, DEFAULT_GROUP);
+                var userId = rootValue.userId;
+
+                if(_.isEqual(roles, ["admin"])) {
+                    return Promise.reject(
+                        new Meteor.Error((Meteor.users.findOne({_id: rootValue.userId})).profile.name + ' cannot delete an Admin')
+                    )
+                }
+                if(userId === args.id) {
+                    return Promise.reject(
+                        new Meteor.Error((Meteor.users.findOne({_id: rootValue.userId})).profile.name + ' cannot delete himself')
+                    )
+                }
+                Promise.resolve(Meteor.users.remove({_id: args.id}));
+
+                return Promise.resolve(Meteor.users.find({}).fetch());
+            }
+        },
+        insertUser: {
+            type: User,
+            args: {
+                name: {type: GraphQLString},
+                username: {type: GraphQLString},
+                email: {type: GraphQLString},
+                password: {type: GraphQLString},
+                roles: {type: GraphQLString}
+            },
+            resolve: (rootValue, args, info) => {
+                if (!canExecute(rootValue, args, info))
+                    return Promise.reject(
+                        new Meteor.Error((Meteor.users.findOne({_id: rootValue.userId})).profile.name + ' cannot execute '
+                            + info.operation.operation + ': ' + info.fieldName)
+                    );
+
+                var myPromise = new Promise(function (resolve, reject) {
+                    if (args.roles === "") {
+                        reject(
+                            new Meteor.Error("Please select a role")
+                        )
+                    } else {
+                        var id = Accounts.createUser({
+                            username: args.username,
+                            email: args.email,
+                            password: args.password,
+                            profile: { name: args.name}
+                        });
+
+                        if (args.roles != ""){
+                            var rolesArray = args.roles.split(",");
+                        }
+
+                        console.log(rolesArray)
+
+                        if (id != undefined) {
+                            if(rolesArray != undefined) {
+                                Roles.addUsersToRoles(id, rolesArray, DEFAULT_GROUP);
+                            }
+                            resolve(Meteor.users.findOne({"_id": id}));
+                        }
+                    }
+
+
+
+                });
+
+                return myPromise;
+            }
+        },
+        updateUser: {
+            type: User,
+            args: {
+                id: {type: GraphQLString},
+                name: {type: GraphQLString},
+                username: {type: GraphQLString},
+                email: {type: GraphQLString},
+                roles: {type: GraphQLString}
+            },
+            resolve: (rootValue, args, info) => {
+                if (!canExecute(rootValue, args, info))
+                    return Promise.reject(
+                        new Meteor.Error((Meteor.users.findOne({_id: rootValue.userId})).profile.name + ' cannot execute '
+                            + info.operation.operation + ': ' + info.fieldName)
+                    );
+
+                var myPromise = new Promise(function (resolve, reject) {
+                    if (args.roles === "") {
+                        reject(
+                            new Meteor.Error("Please select a role")
+                        )
+                    }
+                    var id = Meteor.users.update(args.id, {$set: {
+                        username: args.username,
+                        email: args.email,
+                        profile: { name: args.name }
+                    }});
+
+                    if (args.roles != ""){
+                        var rolesArray = args.roles.split(",");
+                    }
+
+                    if(id > 0) {
+                        if(rolesArray != undefined) {
+                            Roles.setUserRoles(args.id, rolesArray, DEFAULT_GROUP);
+                        }
+                        resolve(Meteor.users.findOne({"_id": args.id}));
+                    }
+
+                })
+
+                return myPromise;
             }
         }
     })

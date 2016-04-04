@@ -1,5 +1,5 @@
-const {Link} = ReactRouter;
-const {browserHistory} = ReactRouter;
+const {Link,browserHistory} = ReactRouter;
+
 
 Customer = React.createClass({
 

@@ -1,6 +1,7 @@
 Meteor.startup(function() {
 
-    Permissions.remove({})
+    Meteor.users.remove({});
+    Permissions.remove({});
     People.remove({});
     Customers.remove({});
 
@@ -57,7 +58,13 @@ Meteor.startup(function() {
             role: 'admin',
             components: [
                 {name: 'Admin'}],
-            allowed: []
+            allowed: [
+                {name: 'users'},
+                {name: 'user'},
+                {name: 'deleteUser'},
+                {name: 'insertUser'},
+                {name: 'updateUser'}
+            ]
         });
     }
 

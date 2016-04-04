@@ -121,3 +121,62 @@ Address = new GraphQLObjectType({
         country: {type: GraphQLString}
     })
 });
+
+//User
+
+UserEmail = new GraphQLObjectType({
+    name: 'UserEmail',
+    fields: () => ({
+        address: {type: GraphQLString},
+        verified: {type: GraphQLString}
+    })
+});
+
+Profile = new GraphQLObjectType({
+    name: 'Profile',
+    fields: () => ({
+        name: {type: GraphQLString}
+    })
+});
+
+Group = new GraphQLObjectType({
+    name: 'Group',
+    fields: () => ({
+        defaultGroup: {type: GraphQLString}
+    })
+});
+
+User = new GraphQLObjectType({
+    name: 'User',
+    fields: () => ({
+        _id: {type: GraphQLString},
+        username: {type: GraphQLString},
+        emails: {type: new GraphQLList(UserEmail)},
+        profile: {type: Profile},
+        roles: {type: Group}
+    })
+});
+
+Component = new GraphQLObjectType({
+    name: 'Component',
+    fields: () => ({
+        name: {type: GraphQLString}
+    })
+});
+
+Action = new GraphQLObjectType({
+    name: 'Action',
+    fields: () => ({
+        name: {type: GraphQLString}
+    })
+});
+
+Permission = new GraphQLObjectType({
+    name: 'Permission',
+    fields: () => ({
+        _id: {type: GraphQLString},
+        role: {type: GraphQLString},
+        components: {type: new GraphQLList(Component)},
+        allowed: {type: new GraphQLList(Action)}
+    })
+});

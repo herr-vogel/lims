@@ -99,7 +99,7 @@ CompanyEdit = React.createClass({
         `).then(result => {
 
             if(result.updateCustomer._id !== undefined || result.updateCustomer._id > 0) {
-                browserHistory.push(`/customer/company/${result.updateCustomer._id}`)
+                browserHistory.push(`/customers/company/${result.updateCustomer._id}`)
             }
         }, error => {
             this.setState({
