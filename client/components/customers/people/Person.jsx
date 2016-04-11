@@ -1,5 +1,9 @@
 Person = React.createClass({
 
+    // this is the parent component for people
+    // input: -
+    // output: render Person
+
     componentWillMount () {
         document.title = "LIMS People"
     },

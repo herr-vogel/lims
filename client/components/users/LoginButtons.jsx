@@ -2,13 +2,13 @@ const {browserHistory} = ReactRouter;
 
 LoginButtons = React.createClass({
 
+    // this component is used to show the loginButtons in the sideNav
+    // input: user, userId
+    // output: render LoginButtons
 
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        //console.log('LoginButtons: getMeteorData()...');
-        //console.log('...currentUser: ', Meteor.user());
-        //console.log('...currentUserId: ', Meteor.userId());
         return {
             currentUser: Meteor.user(),
             currentUserId: Meteor.userId()
@@ -16,11 +16,16 @@ LoginButtons = React.createClass({
 
     },
 
+    // signOut function
+
     signOut(e) {
         e.preventDefault();
 
         Meteor.logout(this.signOutCallback);
     },
+
+    // signOutCallback function
+    // it gets the error from Meteor.logout as a parameter
 
     signOutCallback(error) {
         if (error == undefined) {
@@ -31,12 +36,13 @@ LoginButtons = React.createClass({
         }
     },
 
+    // navigateToLogin function
+    // pushes the user to /login
     navigateToLogin() {
         browserHistory.push('/login');
     },
 
     render() {
-        //console.log('LoginButtons: render()...');
         let loginButton;
 
         if (this.data.currentUser) {

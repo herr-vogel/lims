@@ -2,6 +2,10 @@ const {Link, browserHistory} = ReactRouter;
 
 PersonEdit = React.createClass({
 
+    // this component is used to show the person edit form
+    // input: personId
+    // output: render Person edit UI with data
+
     mixins: [LinkedStateMixin],
 
     getInitialState() {
@@ -17,6 +21,7 @@ PersonEdit = React.createClass({
     },
 
     componentDidMount() {
+        // sends request to GraphQL for "person" query
         LIMSSchema.query(`
             {
                 person (id: "${this.props.params.personId}")
@@ -50,7 +55,9 @@ PersonEdit = React.createClass({
 
             }
         `).then(result => {
+            // result of the request
 
+            // creates array with customers for select company
             var customers = result.customers,
                 customerOptions = [];
 
@@ -84,6 +91,8 @@ PersonEdit = React.createClass({
             });
         }, error => {
 
+            // error of the request
+
             console.log('PersonEdit error:', error);
 
             this.setState({
@@ -92,15 +101,21 @@ PersonEdit = React.createClass({
         });
     },
 
+    // logChange function
+    // updates the selectedCustomer
+
     logChange(val) {
         this.setState({
             selectedCustomer: val
         })
     },
 
+    // onSubmit function
+    // sends the data to GraphQL
+
     onSubmit (e) {
         e.preventDefault();
-
+        // send request to GraphQL for "updatePerson" mutation
         LIMSSchema.mutate(`
             {
                 updatePerson (
@@ -115,7 +130,7 @@ PersonEdit = React.createClass({
                     email: "${this.state.email}",
                     privateStreet: "${this.state.privateStreet}",
                     privateCity: "${this.state.privateCity}",
-                    privateZip: "${this.state.privateZip}",
+                    privateZip: ${Number(this.state.privateZip)},
                     privateCountry: "${this.state.privateCountry}",
                     customerId: "${this.state.selectedCustomer}"
                 )
@@ -124,11 +139,12 @@ PersonEdit = React.createClass({
                 }
             }
         `).then(result => {
-
+            // result of the request
             if(result.updatePerson._id !== undefined || result.updatePerson._id > 0) {
-                this.props.history.pushState(null, `/customers/person/${result.updatePerson._id}`);
+               browserHistory.push(`/customers/person/${result.updatePerson._id}`);
             }
         }, error => {
+            // error of the request
             this.setState({
                 updateError: error.reason
             })
@@ -151,7 +167,7 @@ PersonEdit = React.createClass({
                     <AuthErrors errors={this.state.errors} />
                     <div className="row">
                         <div className="col l6">
-                            <h5>Add Person</h5>
+                            <h5>Edit Person</h5>
                             <div className="input-field">
                                 <i className="material-icons prefix">account_circle</i>
                                 <label className="active" htmlFor="firstName">First Name</label>

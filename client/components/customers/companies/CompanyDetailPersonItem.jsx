@@ -2,6 +2,10 @@ const {Link} = ReactRouter;
 
 CompanyDetailPersonItem = React.createClass({
 
+    // this component is used to render a table row of a person
+    // input: person, removeFunc
+    // output: render table row with person data
+
     propTypes: {
         person: React.PropTypes.object.isRequired,
         removeFunc: React.PropTypes.func.isRequired

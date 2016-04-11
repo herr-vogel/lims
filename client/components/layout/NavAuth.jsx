@@ -2,7 +2,9 @@ const {Link} = ReactRouter;
 
 NavAuth = React.createClass({
 
-
+    // this component renders the nav links dynamically
+    // input: -
+    // output: render Nav links for the user roll
 
     getInitialState(){
         return {
@@ -13,7 +15,8 @@ NavAuth = React.createClass({
 
     componentWillMount() {
 
-        //Die Methode gibt ein Array mit den erlaubten Componenten zürück
+        //This Meteor call gets the component the logged in user is allowed to see
+
         Meteor.call('getComponents', function (error, result) {
 
             if(result !== undefined) {
@@ -26,6 +29,8 @@ NavAuth = React.createClass({
             }
         }.bind(this))
     },
+
+    // returns a <li> element for every component
 
     renderNavLinks() {
         return this.state.components.map(function (component, index) {

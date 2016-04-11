@@ -2,6 +2,10 @@ const {Link, browserHistory} = ReactRouter;
 
 PersonDetail = React.createClass({
 
+    // this component is used to render the detail of a person
+    // input: personId
+    // output: render UI with Person Detail
+
     getInitialState() {
         return {
             person: {},
@@ -11,6 +15,7 @@ PersonDetail = React.createClass({
     },
 
     componentDidMount() {
+        // sends request to GraphQL for "person" query
         LIMSSchema.query(`
             {
                 person (id: "${this.props.params.personId}")
@@ -38,11 +43,13 @@ PersonDetail = React.createClass({
 
             }
         `).then(result => {
+            // result of the request
             this.setState({
                 person: result.person,
                 loading: false
             });
         }, error => {
+            // error of the request
             this.setState({
                 message: error.reason
             });
@@ -50,8 +57,10 @@ PersonDetail = React.createClass({
 
     },
 
-    removePerson: function () {
+    // removePerson function
 
+    removePerson: function () {
+        // sends request to GraphQL for "deletePerson" mutation
         LIMSSchema.mutate(`{
             deletePerson (
                 id: "${this.props.params.personId}"
@@ -60,10 +69,11 @@ PersonDetail = React.createClass({
                 name
             }
         }`).then(result => {
-
+            // result of the request
             browserHistory.push("/customers/person");
 
         }, error => {
+            // error of the request
             this.setState({
                 updateError: error.reason
             })

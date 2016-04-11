@@ -2,6 +2,10 @@ const {Link, browserHistory} = ReactRouter;
 
 PersonAdd = React.createClass({
 
+    // this component is used to render the person add form
+    // input: -
+    // output: render Add Person UI
+
     mixins: [LinkedStateMixin],
 
     getInitialState() {
@@ -27,6 +31,7 @@ PersonAdd = React.createClass({
 
     componentDidMount() {
 
+        // sends request to GraphQL for "customers" query
         LIMSSchema.query(`
         {
             customers {
@@ -35,6 +40,9 @@ PersonAdd = React.createClass({
             }
         }
       `).then(result => {
+            // result of the request
+
+            // creates array with all customers for the company select
             var customers = result.customers,
                 customerOptions = [];
 
@@ -50,6 +58,7 @@ PersonAdd = React.createClass({
                 customerOptions: customerOptions
             });
         }, error => {
+            // error of the request
             console.log('PersonAdd error:', error);
 
             this.setState({
@@ -58,15 +67,20 @@ PersonAdd = React.createClass({
         });
     },
 
+    // logChange function
+    // updates the selectedCustomer
     logChange(val) {
         this.setState({
             selectedCustomer: val
         })
     },
 
+    // onSubmit function
+    // sends the data to GraphQL
     onSubmit (e) {
         e.preventDefault();
 
+        // sends request to GraphQL for "insertPerson" mutation
         LIMSSchema.mutate(`
             {
                 insertPerson (
@@ -80,7 +94,7 @@ PersonAdd = React.createClass({
                     email: "${this.state.email}",
                     privateStreet: "${this.state.privateStreet}",
                     privateCity: "${this.state.privateCity}",
-                    privateZip: "${this.state.privateZip}",
+                    privateZip: ${Number(this.state.privateZip)},
                     privateCountry: "${this.state.privateCountry}",
                     customerId: "${this.state.selectedCustomer}"
                 )
@@ -89,11 +103,12 @@ PersonAdd = React.createClass({
                 }
             }
         `).then(result => {
-
+            // result of the request
             if(result.insertPerson._id !== undefined || result.insertPerson._id > 0) {
                 browserHistory.push(`/customers/person/${result.insertPerson._id}`)
             }
         }, error => {
+            // error of the request
             this.setState({
                 updateError: error.reason
             })

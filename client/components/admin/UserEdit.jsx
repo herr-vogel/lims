@@ -2,6 +2,10 @@ const {Link, browserHistory} = ReactRouter;
 
 UserEdit = React.createClass({
 
+    // this component is used to render the edit form for the user
+    // input: userId
+    // output: render User Edit form with data
+
     mixins: [LinkedStateMixin],
 
     getInitialState() {
@@ -13,6 +17,7 @@ UserEdit = React.createClass({
     },
 
     componentWillMount() {
+        // sends request to GraphQL for "user" query
         LIMSSchema.query(`
         {
             user (
@@ -34,10 +39,13 @@ UserEdit = React.createClass({
             }
         }
         `).then( result => {
+            // result of the request
 
             var rolesArray = result.user.roles.defaultGroup.split(',')
 
             var adminCheckbox = false, userCheckbox = false;
+
+            // fills the checkboxes
 
             if(rolesArray.indexOf('admin') > -1) {
                 adminCheckbox = true
@@ -55,11 +63,15 @@ UserEdit = React.createClass({
                 inputCheckboxUser: userCheckbox
             })
         }, error => {
+            // error of the request
             this.setState({
                 message: error.reason
             })
         })
     },
+
+    // onSubmit function
+    // sends the data to GraphQL
 
     onSubmit(e) {
        e.preventDefault();
@@ -74,6 +86,7 @@ UserEdit = React.createClass({
             roles.push('user');
         }
 
+        // send request to GraphQL for "updateUser" mutation
         LIMSSchema.mutate(`
         {
             updateUser (
@@ -87,10 +100,12 @@ UserEdit = React.createClass({
                 _id
             }
         }`).then(result => {
+            // result of the request
             if(result.updateUser._id !== undefined || result.updateUser._id > 0) {
                 browserHistory.push(`/admin/${result.updateUser._id}`);
             }
         }, error => {
+            // error of the request
             this.setState({
                 updateError: error.reason
             })

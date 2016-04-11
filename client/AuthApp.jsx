@@ -2,7 +2,11 @@ const {browserHistory} = ReactRouter;
 
 AuthApp = React.createClass({
 
-    // Diese Komponente wird dann angezeigt wenn der User auf /app springt. Er muss eingelogt sein sonst wird er auf /login weitergeleitet.
+    // this component is shown when the user get pushed to /app
+    // he has to be logged in to see this component
+    // if not -> he gets pushed to /login
+    //input: userId
+    //output: render AuthApp
 
     mixins: [ReactMeteorData],
 
@@ -13,7 +17,7 @@ AuthApp = React.createClass({
         };
     },
 
-    // Checkt ob der user eingelogt ist.
+    // checks if the user is logged in
 
     componentDidUpdate (prevProps, prevState) {
         if (!this.data.currentUserId) {

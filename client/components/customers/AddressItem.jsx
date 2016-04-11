@@ -1,5 +1,9 @@
 AddressItem = React.createClass({
 
+    // generic component to render addresses
+    // input: address
+    // output: render Address data
+
     propTypes: {
         address: React.PropTypes.object
     },

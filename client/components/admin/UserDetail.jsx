@@ -3,6 +3,10 @@ const {Link, browserHistory} = ReactRouter;
 
 UserDetail = React.createClass({
 
+    // this component is used to render the detail of a user
+    // input: userId
+    // output: render UI with user details
+
     getInitialState() {
         return {
             user: {},
@@ -12,6 +16,8 @@ UserDetail = React.createClass({
     },
 
     componentDidMount() {
+
+        // sends request to GraphQL for "user" query
         LIMSSchema.query(`
         {
             user (
@@ -33,19 +39,25 @@ UserDetail = React.createClass({
             }
         }
         `).then( result => {
-
+            // result of the request
             this.setState({
                 user: result.user,
                 loading: false
             })
         }, error => {
+            // error of the request
             this.setState({
                 message: error.reason
             })
         })
     },
 
+    // removeUser function
+    // deletes user from the user collection
+
     removeUser: function() {
+
+        // sends request to GraphQL for "deleteCustomer" mutation
         LIMSSchema.mutate(`
         {
             deleteUser(
@@ -56,8 +68,10 @@ UserDetail = React.createClass({
             }
         }
         `).then(result => {
+            // result of the request
             browserHistory.push("/admin")
         }, error => {
+            // error of the request
             this.setState({
                 updateError: error.reason
             })

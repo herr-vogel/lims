@@ -2,6 +2,10 @@ const {Link, browserHistory} = ReactRouter;
 
 CompanyDetail = React.createClass({
 
+    // this component is used to render the detail of a company
+    // input: customerId
+    // output: render UI with Company Detail
+
     getInitialState() {
         return {
             customer: {},
@@ -14,6 +18,7 @@ CompanyDetail = React.createClass({
     },
 
     componentDidMount() {
+        // sends request to GraphQL for "person" query
         LIMSSchema.query(`
         {
             customer (id: "${this.props.params.customerId}")
@@ -57,7 +62,7 @@ CompanyDetail = React.createClass({
             }
         }
        `).then(result => {
-
+            // result of the request
             this.setState({
                 customer: result.customer,
                 people: result.customer.people,
@@ -66,6 +71,7 @@ CompanyDetail = React.createClass({
 
 
         }, error => {
+            // error of the request
             console.log('CompanyDetail error:', error);
             this.setState({
                 message: error.reason
@@ -74,8 +80,9 @@ CompanyDetail = React.createClass({
 
     },
 
+    // removePerson function
     removeCustomer: function () {
-
+        // sends request to GraphQL for "deleteCustomer" mutation
         LIMSSchema.mutate(`{
             deleteCustomer (
                 id: "${this.props.params.customerId}"
@@ -84,10 +91,11 @@ CompanyDetail = React.createClass({
                 name
             }
         }`).then(result => {
-
+            // result of the request
             browserHistory.push("/customers/company");
 
         }, error => {
+            // error of the request
             this.setState({
                 updateError: error.reason
             })
@@ -95,7 +103,7 @@ CompanyDetail = React.createClass({
     },
 
     removeCustomerIdInPerson: function (personId) {
-
+        // sends request to GraphQL for "removeCustomerIdInPerson" mutation
         LIMSSchema.mutate(`
             {
                 removeCustomerIdInPerson (
@@ -106,7 +114,7 @@ CompanyDetail = React.createClass({
                 }
             }
         `).then(result => {
-
+            // result of the request
             var updatedPersons = this.state.people;
 
             this.setState({
@@ -115,6 +123,7 @@ CompanyDetail = React.createClass({
                 })
             })
         }, error => {
+            // error of the request
             this.setState({
                 updateError: error.reason
             })
@@ -123,6 +132,7 @@ CompanyDetail = React.createClass({
     },
 
     renderPersons() {
+        // returns <CompanyDetailPersonItem> for every person that is related to this company
         return this.state.people.map(function (person) {
             return <CompanyDetailPersonItem key={person._id} person={person} removeFunc={this.removeCustomerIdInPerson.bind(null, person._id)} />
         }.bind(this));

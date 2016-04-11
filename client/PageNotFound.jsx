@@ -1,6 +1,8 @@
 PageNotFound = React.createClass({
 
-    //Diese Komponente wird angezeigt wenn es keine Route für die URL hat.
+   //React shows this Component when no Route was found
+    // input: -
+    // output: render  PageNotFound
     render() {
         return (
             <div className="container">

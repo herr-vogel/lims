@@ -2,6 +2,10 @@ const {Link, browserHistory} = ReactRouter;
 
 UserAdd = React.createClass({
 
+    // this component is used to render the user add form
+    // input: -
+    // output: render User Add form
+
     mixins: [LinkedStateMixin],
 
     getInitialState() {
@@ -16,9 +20,8 @@ UserAdd = React.createClass({
         }
     },
 
-    handleClick(e) {
-
-    },
+    // onSubmit function
+    // sends the data to GraphQL
 
     onSubmit(e) {
         e.preventDefault()
@@ -33,6 +36,7 @@ UserAdd = React.createClass({
             roles.push('user');
         }
 
+        // sends request to GraphQL for "insertUser" mutation
         LIMSSchema.mutate(`
         {
             insertUser (
@@ -47,10 +51,12 @@ UserAdd = React.createClass({
             }
         }
         `).then (result => {
+            // result of the request
             if(result.insertUser._id !== undefined || result.insertUser._id > 0) {
                 browserHistory.push(`/admin/${result.insertUser._id}`);
             }
         }, error => {
+            // error of the request
             this.setState({
                 updateError: error.reason
             })

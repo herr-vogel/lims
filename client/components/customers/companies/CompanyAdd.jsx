@@ -2,6 +2,10 @@ const {Link, browserHistory} = ReactRouter;
 
 CompanyAdd = React.createClass({
 
+    // this component is used to render the company add form
+    // input: -
+    // output: render Add Company UI
+
     mixins: [LinkedStateMixin],
 
     getInitialState() {
@@ -23,9 +27,13 @@ CompanyAdd = React.createClass({
         }
     },
 
+    // onSubmit function
+    // sends the data to GraphQL
+
     onSubmit (e) {
         e.preventDefault();
 
+        // sends request to GraphQL for "insertCustomer" mutation
         LIMSSchema.mutate(`
             {
                 insertCustomer (
@@ -36,11 +44,11 @@ CompanyAdd = React.createClass({
                     website: "${this.state.inputWebsite}",
                     invoiceStreet: "${this.state.invoiceStreet}",
                     invoiceCity: "${this.state.invoiceCity}",
-                    invoiceZip: "${this.state.invoiceZip}",
+                    invoiceZip: ${Number(this.state.invoiceZip)},
                     invoiceCountry: "${this.state.invoiceCountry}",
                     shippingStreet: "${this.state.shippingStreet}",
                     shippingCity: "${this.state.shippingCity}",
-                    shippingZip: "${this.state.shippingZip}",
+                    shippingZip: ${Number(this.state.shippingZip)},
                     shippingCountry: "${this.state.shippingCountry}"
                 )
                 {
@@ -48,6 +56,7 @@ CompanyAdd = React.createClass({
                 }
             }
         `).then(result => {
+            // result of the request
             console.log(result.insertCustomer);
 
             if(result.insertCustomer._id !== undefined || result.insertCustomer._id > 0) {
@@ -60,6 +69,7 @@ CompanyAdd = React.createClass({
             }
 
         }, error => {
+            // error of the request
             this.setState({
                 updateError: error.reason
             })
@@ -129,7 +139,7 @@ CompanyAdd = React.createClass({
                             </div>
                             <div className="input-field">
                                 <label htmlFor="invoiceZip">Zip</label>
-                                <input type="text" id="invoiceZip" valueLink={this.linkState('shippingZip')} />
+                                <input type="text" id="invoiceZip" valueLink={this.linkState('shippingZip')}/>
                             </div>
                             <div className="input-field">
                                 <label htmlFor="invoiceCity">City</label>

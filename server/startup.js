@@ -1,13 +1,13 @@
 Meteor.startup(function() {
 
-    Meteor.users.remove({});
-    Permissions.remove({});
-    People.remove({});
-    Customers.remove({});
+    //Meteor.users.remove({});
+    //Permissions.remove({});
+    //People.remove({});
+    //Customers.remove({});
 
     if (Meteor.users.find().count() === 0) {
 
-        //Erstellen der Test Usern (User, Admin, Root)
+        // insert test Users into Users (user, admin & root)
         var users = [
             {name:"Test User", username:"user",email:"user@user.com", roles:['user']},
             {name:"Test Admin", username:"admin",email:"admin@admin.com", roles:['admin']},
@@ -32,7 +32,7 @@ Meteor.startup(function() {
 
     }
 
-    //Erstellen der Permissions Collection, wo die Componenten und allowed Querries für die dazugehörigen Rollen gespeichert sind
+    //inset data into Permissions collection
 
     if(Permissions.find({}).count() === 0) {
         Permissions.insert({
@@ -68,6 +68,8 @@ Meteor.startup(function() {
         });
     }
 
+    // insert sample data into Customers & Persons
+
     if(Customers.find({}).count() === 0) {
         Customers.insert({
             _id: "2x6EMcMLPtE6nojDt",
@@ -79,13 +81,13 @@ Meteor.startup(function() {
             invoiceAddress: {
                 "street": "Test Strasse",
                 "city": "Test City",
-                "zip": "Zip",
+                "zip": "0",
                 "country": "Test Land"
             },
             shippingAddress: {
                 "street": "Test Strasse S",
                 "city": "Test City S",
-                "zip": "Zip S",
+                "zip": "01",
                 "country": "Test Land S"
             }
         });

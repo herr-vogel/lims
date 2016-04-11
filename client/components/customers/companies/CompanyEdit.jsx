@@ -2,6 +2,10 @@ const {Link, browserHistory} = ReactRouter;
 
 CompanyEdit = React.createClass({
 
+    // this component is used to show the company edit form
+    // input: customerId
+    // output: render Company edit UI with data
+
     mixins: [LinkedStateMixin],
 
     getInitialState() {
@@ -14,6 +18,7 @@ CompanyEdit = React.createClass({
     },
 
     componentDidMount() {
+        // sends request to GraphQL for "customer" query
         LIMSSchema.query(`
         {
             customer (id: "${this.props.params.customerId}")
@@ -39,7 +44,7 @@ CompanyEdit = React.createClass({
             }
         }
        `).then(result => {
-
+            // result of the request
             this.setState({
                 customer: result.customer,
                 customerLoading: false,
@@ -59,6 +64,7 @@ CompanyEdit = React.createClass({
                 shippingCountry: result.customer.shippingAddress ? result.customer.shippingAddress.country : ""
             });
         }, error => {
+            // error of the request
             console.log('CompanyEdit error:', error);
 
             this.setState({
@@ -68,11 +74,11 @@ CompanyEdit = React.createClass({
 
     },
 
+    // onSubmit function
+    // sends the data to GraphQL
     onSubmit (e) {
         e.preventDefault();
-
-        //console.log("Submit");
-
+        // send request to GraphQL for "updateCompany" mutation
         LIMSSchema.mutate(`
             {
                 updateCustomer (
@@ -84,11 +90,11 @@ CompanyEdit = React.createClass({
                     website: "${this.state.inputWebsite}",
                     invoiceStreet: "${this.state.invoiceStreet}",
                     invoiceCity: "${this.state.invoiceCity}",
-                    invoiceZip: "${this.state.invoiceZip}",
+                    invoiceZip: ${Number(this.state.invoiceZip)},
                     invoiceCountry: "${this.state.invoiceCountry}",
                     shippingStreet: "${this.state.shippingStreet}",
                     shippingCity: "${this.state.shippingCity}",
-                    shippingZip: "${this.state.shippingZip}",
+                    shippingZip: ${Number(this.state.shippingZip)},
                     shippingCountry: "${this.state.shippingCountry}"
                 )
                 {
@@ -97,11 +103,12 @@ CompanyEdit = React.createClass({
                 }
             }
         `).then(result => {
-
+            // result of the request
             if(result.updateCustomer._id !== undefined || result.updateCustomer._id > 0) {
                 browserHistory.push(`/customers/company/${result.updateCustomer._id}`)
             }
         }, error => {
+            // error of the request
             this.setState({
                 updateError: error.reason
             })
@@ -122,7 +129,7 @@ CompanyEdit = React.createClass({
                     <AuthErrors errors={this.state.errors} />
                     <div className="row">
                         <div className="col s6">
-                            <h5>Add Company</h5>
+                            <h5>Edit Company</h5>
                             <div className="input-field">
                                 <label className="active" htmlFor="name">Name</label>
                                 <input type="text" id="name" valueLink={this.linkState('inputName')} className="validate" />

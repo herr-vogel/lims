@@ -1,8 +1,10 @@
 const {Link} = ReactRouter;
 
-//Diese Komponente zeigt eine Tabelle mit allen Firmen.
-
 CompanyList = React.createClass({
+
+    // this component is used to show a list of all companies in a table
+    // input: -
+    // output: render CompanyList
 
     getInitialState() {
         return {
@@ -14,7 +16,7 @@ CompanyList = React.createClass({
     },
 
     componentDidMount() {
-
+        // sends request to GraphQL for "customers" query
         LIMSSchema.query(`
         {
             customers {
@@ -30,14 +32,14 @@ CompanyList = React.createClass({
             }
         }
       `).then(result => {
-
+            // result of the request
             this.setState({
                 customers: result.customers,
                 loading: false
             })
         }, error => {
             console.log('CompanyList error:', error);
-
+            // error of the request
             this.setState({
                 message: error.reason
             });
@@ -45,7 +47,7 @@ CompanyList = React.createClass({
     },
 
     removeCustomer: function (customerId) {
-
+        // sends request to GraphQL for "deleteCustomer" mutation
         LIMSSchema.mutate(`{
             deleteCustomer (
                 id: "${customerId}"
@@ -54,7 +56,7 @@ CompanyList = React.createClass({
                 name
             }
         }`).then(result => {
-
+            // result of the request
             var updateCustomers = this.state.customers;
 
             this.setState({
@@ -64,16 +66,21 @@ CompanyList = React.createClass({
             })
 
         }, error => {
+            // error of the request
             this.setState({
                 updateError: error.reason
             })
         });
     },
 
+    // handleSearchStringChange function
+    // updates the value of searchString
     handleSearchStringChange: function (e) {
         this.setState({searchString: e.target.value});
     },
 
+    // renderCompany function
+    // filters matching companies
     renderCompanies() {
         var filteredCompanies = this.state.customers,
             searchString = this.state.searchString.trim().toLowerCase();
@@ -83,6 +90,7 @@ CompanyList = React.createClass({
                 return JSON.stringify(l).toLowerCase().match(searchString);
             })
         }
+        // returns <CompanyListItem> for every Company
 
         return filteredCompanies.map(function(company) {
             return <CompanyListItem key={company._id} company={company} removeFunc={this.removeCustomer.bind(null, company._id)} />;

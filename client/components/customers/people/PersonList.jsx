@@ -2,6 +2,10 @@ const {Link} = ReactRouter;
 
 PersonList = React.createClass({
 
+    // this component is used to show a list of all people in a table
+    // input: -
+    // output: render PersonList
+
     getInitialState() {
         return {
             searchString: '',
@@ -12,6 +16,7 @@ PersonList = React.createClass({
     },
 
     componentDidMount() {
+        // sends request to GraphQL for "people" query
         LIMSSchema.query(`
         {
             people {
@@ -34,12 +39,14 @@ PersonList = React.createClass({
             }
         }
       `).then(result => {
+            // result of the request
             console.log(result.people)
             this.setState({
                 people: result.people,
                 loading: false
             });
         }, error => {
+            // error of the request
             console.log('PersonList error:', error);
 
             this.setState({
@@ -48,8 +55,9 @@ PersonList = React.createClass({
         });
     },
 
-    removePerson: function (personId) {
 
+    removePerson: function (personId) {
+        // sends request to GraphQL for "deletePerson" mutation
         LIMSSchema.mutate(`{
             deletePerson (
                 id: "${personId}"
@@ -58,7 +66,7 @@ PersonList = React.createClass({
                 name
             }
         }`).then(result => {
-
+            // result of the request
             var updatePersons = this.state.people;
 
             this.setState({
@@ -68,15 +76,21 @@ PersonList = React.createClass({
             })
 
         }, error => {
+            // error of the result
             this.setState({
                 updateError: error.reason
             })
         });
     },
 
+    // handleSearchStringChange function
+    // updates the value of searchString
     handleSearchStringChange: function (e) {
         this.setState({searchString: e.target.value});
     },
+
+    // renderPeople function
+    // filters matching people
 
     renderPeople() {
         var filteredPeople = this.state.people,
@@ -89,7 +103,7 @@ PersonList = React.createClass({
 
         }
 
-
+        // returns <PersonListItem> for every Person
         return filteredPeople.map(function (person) {
             return <PersonListItem key={person._id} person={person} removeFunc={this.removePerson.bind(null, person._id)} />;
         }.bind(this));

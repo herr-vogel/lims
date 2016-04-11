@@ -3,6 +3,10 @@ const {Link,browserHistory} = ReactRouter;
 
 Customer = React.createClass({
 
+    // this is the parent component for customer
+    // input: -
+    // output: render Customer
+
     getInitialState() {
         return {
             loadingCallback: true,
@@ -14,6 +18,9 @@ Customer = React.createClass({
     },
 
     componentWillMount() {
+
+        // this Meteor call checks if the user is allowed to see the Customer component
+        // it gets back a boolean
         Meteor.call('canShow', 'Customers', function(error, result) {
             if(result !== undefined) {
                 this.setState({
@@ -24,6 +31,8 @@ Customer = React.createClass({
         }.bind(this))
     },
 
+    // canShow function
+    // is pushes to /app when you're not allowed to see Customer
     canShow: function() {
         if(!this.state.loadingCallback && !this.state.canShow) {
             browserHistory.push('/app');

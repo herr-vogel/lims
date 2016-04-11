@@ -1,5 +1,9 @@
 AuthErrors = React.createClass({
 
+    // this component shows the errors from UserLoginForm
+    // input: errors
+    // output: render AuthErrors
+
     propTypes: {
         errors: React.PropTypes.object
     },

@@ -7,7 +7,7 @@ const {
     GraphQLNonNull
     } = GraphQL.types;
 
-//Diese Function checkt ob der User dieser Query abfragen oder diese Mutation ausführen darf und gibt einen Boolean zurück.
+//  this function checks if the user is allowed to execute the query or mutation
 function canExecute(rootValue, args, info) {
     var roles = Roles.getRolesForUser(rootValue.userId, DEFAULT_GROUP);
     var allowedQueries = [];
@@ -24,7 +24,7 @@ function canExecute(rootValue, args, info) {
     return _canExecute;
 }
 
-//Hier werden die Queries definiert.
+// here we define all queries
 
 const query = new GraphQLObjectType({
     name: 'LIMSQueries',
@@ -70,12 +70,6 @@ const query = new GraphQLObjectType({
                         new Meteor.Error((Meteor.users.findOne({_id: rootValue.userId})).profile.name + ' cannot execute '
                             + info.operation.operation + ': ' + info.fieldName)
                     );
-
-                let fields = {};
-                let fieldASTs = info.fieldASTs;
-                fieldASTs[0].selectionSet.selections.map(function (selection) {
-                    fields[selection.name.value] = 1;
-                });
 
                 return Promise.resolve(Meteor.wrapAsync(People.rawCollection().aggregate.bind(People.rawCollection()))([
                     {
@@ -157,6 +151,8 @@ const query = new GraphQLObjectType({
     })
 });
 
+// here we define all mutations
+
 const mutation = new GraphQLObjectType({
     name: 'LIMSMutations',
     fields: () => ({
@@ -171,11 +167,11 @@ const mutation = new GraphQLObjectType({
                 fax: {type: GraphQLString},
                 invoiceStreet: {type: GraphQLString},
                 invoiceCity: {type: GraphQLString},
-                invoiceZip: {type: GraphQLString},
+                invoiceZip: {type: GraphQLInt},
                 invoiceCountry: {type: GraphQLString},
                 shippingStreet: {type: GraphQLString},
                 shippingCity: {type: GraphQLString},
-                shippingZip: {type: GraphQLString},
+                shippingZip: {type: GraphQLInt},
                 shippingCountry: {type: GraphQLString}
             },
             resolve: (rootValue, args, info) => {
@@ -256,11 +252,11 @@ const mutation = new GraphQLObjectType({
                 fax: {type: GraphQLString},
                 invoiceStreet: {type: GraphQLString},
                 invoiceCity: {type: GraphQLString},
-                invoiceZip: {type: GraphQLString},
+                invoiceZip: {type: GraphQLInt},
                 invoiceCountry: {type: GraphQLString},
                 shippingStreet: {type: GraphQLString},
                 shippingCity: {type: GraphQLString},
-                shippingZip: {type: GraphQLString},
+                shippingZip: {type: GraphQLInt},
                 shippingCountry: {type: GraphQLString}
 
             },
@@ -329,7 +325,7 @@ const mutation = new GraphQLObjectType({
                 mobile: {type: GraphQLString},
                 email: {type: GraphQLString},
                 privateStreet: {type: GraphQLString},
-                privateZip: {type: GraphQLString},
+                privateZip: {type: GraphQLInt},
                 privateCity: {type: GraphQLString},
                 privateCountry: {type: GraphQLString},
                 customerId: {type: GraphQLString}
@@ -386,7 +382,7 @@ const mutation = new GraphQLObjectType({
                 mobile: {type: GraphQLString},
                 email: {type: GraphQLString},
                 privateStreet: {type: GraphQLString},
-                privateZip: {type: GraphQLString},
+                privateZip: {type: GraphQLInt},
                 privateCity: {type: GraphQLString},
                 privateCountry: {type: GraphQLString},
                 customerId: {type: GraphQLString}

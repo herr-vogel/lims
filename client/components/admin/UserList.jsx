@@ -2,6 +2,10 @@ const {Link} = ReactRouter;
 
 UserList = React.createClass({
 
+    // this component is used to show all users in a table
+    // input: -
+    // output: render UserList
+
     getInitialState() {
         return {
             searchString: '',
@@ -13,6 +17,7 @@ UserList = React.createClass({
     },
 
     componentDidMount() {
+        // sends request to GraphQL for "users" query
         LIMSSchema.query(`
         {
             users {
@@ -32,12 +37,13 @@ UserList = React.createClass({
 
         }
         `).then(result => {
-
+            //result of the request
             this.setState({
                 users: result.users,
                 loading: false
             })
         }, error => {
+            // error of the request
             this.setState({
                 message: error.reason
             });
@@ -46,6 +52,7 @@ UserList = React.createClass({
     },
 
     removeUser: function(userId) {
+        // sends request to GraphQL for "deleteUser" mutation
         LIMSSchema.mutate(`
         {
             deleteUser(
@@ -56,6 +63,7 @@ UserList = React.createClass({
             }
         }
         `).then(result => {
+            //result of the request
             var updatedUsers = this.state.users;
 
             this.setState({
@@ -64,16 +72,21 @@ UserList = React.createClass({
                 })
             })
         }, error => {
+            // error of the request
             this.setState({
                 updateError: error.reason
             })
         })
     },
 
+    // handleSearchStringChange function
+    // updates the value of searchString
     handleSearchStringChange: function (e) {
         this.setState({searchString: e.target.value});
     },
 
+    // renderUser function
+    // filters matching users
     renderUser() {
         var filteredUsers = this.state.users,
             searchString = this.state.searchString.trim().toLowerCase();
@@ -85,6 +98,7 @@ UserList = React.createClass({
 
         }
 
+        // return <UserListItem> for every user
         return filteredUsers.map(function (user) {
             return <UserListItem key={user._id} user={user} removeFunc={this.removeUser.bind(null, user._id)} />;
         }.bind(this));

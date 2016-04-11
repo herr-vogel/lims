@@ -1,6 +1,11 @@
 const {Link} = ReactRouter;
 
 CompanyListItem = React.createClass({
+
+    // this component is used to render a table row for a company
+    // input: company, removeFunc
+    // output render table row with company data
+
     propTypes: {
         company: React.PropTypes.object.isRequired,
         removeFunc: React.PropTypes.func.isRequired

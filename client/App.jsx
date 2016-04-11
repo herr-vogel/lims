@@ -1,6 +1,9 @@
 App = React.createClass({
 
-    //Seiten Strucktur bestehend aus SideNav und main (Content)
+    // this shows the component App
+    // this component is used to define the structure off the application
+    //input: -
+    //output: render App
 
     render() {
         return (

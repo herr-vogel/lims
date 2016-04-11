@@ -1,13 +1,12 @@
 Home = React.createClass({
 
-    //Diese Komponente ist die erste Seite, die der User zu gesicht bekommt.
+    //this component is show when you first visit the site
+    //input: user, userId
+    //output: render Home
 
     mixins: [ReactMeteorData],
 
     getMeteorData() {
-        //console.log('Home: getMeteorData()...');
-        //console.log('...user: ', Meteor.user());
-        //console.log('...userId: ', Meteor.userId());
         return {
             currentUser: Meteor.user(),
             currentUserId: Meteor.userId()

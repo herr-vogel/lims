@@ -2,7 +2,9 @@ const {browserHistory} = ReactRouter
 
 UserLoginForm = React.createClass({
 
-    // Dies ist die Login Form die bei /login angezeigt wird.
+    // this component is shown when you jump to /login
+    // input: userId
+    // output: render UserLoginForm
 
     mixins: [ReactMeteorData],
 
@@ -12,7 +14,7 @@ UserLoginForm = React.createClass({
         }
     },
 
-    //Wenn der User eingelogt ist wird er auf /app weitergeleitet.
+    // when the user is logged in he get pushed to /app
 
     componentWillMount() {
         document.title = "Login"
@@ -33,6 +35,9 @@ UserLoginForm = React.createClass({
             errors: {}
         }
     },
+
+    // onSubmit function
+    // handles the submit of the UserLoginForm
 
     onSubmit(e) {
         e.preventDefault();

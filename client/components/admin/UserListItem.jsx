@@ -2,6 +2,10 @@ const {Link} = ReactRouter;
 
 UserListItem = React.createClass({
 
+    // this component is used to render the table row of a user
+    // input: user, removeFunc
+    // output: render table row of a user
+
     propTypes: {
         user: React.PropTypes.object.isRequired,
         removeFunc: React.PropTypes.func.isRequired

@@ -5,10 +5,11 @@ const {
     GraphQLList,
     GraphQLNonNull,
     GraphQLEnum,
+    GraphQLInt,
     GraphQLEnumType
     } = GraphQL.types;
 
-//Hier werden die Typen von Objekten für GraphQL definiert
+// here we define the Types of object we use for GraphQL
 
 Customer = new GraphQLObjectType({
     name: 'Customer',
@@ -117,7 +118,7 @@ Address = new GraphQLObjectType({
     fields: () => ({
         street: {type: GraphQLString},
         city: {type: GraphQLString},
-        zip: {type: GraphQLString},
+        zip: {type: GraphQLInt},
         country: {type: GraphQLString}
     })
 });
